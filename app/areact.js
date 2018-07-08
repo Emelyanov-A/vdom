@@ -6,6 +6,10 @@
 
   function createElement(el, props, ...children) {
     if (isElement(el)) {
+      if (el.__proto__.name === "Component") {
+        let component = new el(props);
+        return component.render();
+      }
       return el(props);
     } else {
       return {
@@ -24,16 +28,20 @@
         : document.createElement(vdomEl.nodeElement);
     let props = vdomEl.attributes;
     for (prop in props) {
-      let att = document.createAttribute(prop);
       let value = props[prop];
-      if (typeof props[prop] === "object") {
-        value = "";
-        for (style in props[prop]) {
-          value += style + ":" + props[prop][style];
+      if (typeof value === "function") {
+        el.onclick = value;
+      } else {
+        let att = document.createAttribute(prop);
+        if (typeof value === "object") {
+          value = "";
+          for (style in props[prop]) {
+            value += style + ":" + props[prop][style];
+          }
         }
+        att.value = value;
+        el.setAttributeNode(att);
       }
-      att.value = value;
-      el.setAttributeNode(att);
     }
     return parentElement.appendChild(el);
   }
@@ -54,8 +62,30 @@
     renderVDOM(newVDOM, oldVDOM, domEl);
   }
 
+  class Component {
+    constructor(props) {
+      this.status = props ? props : {};
+    }
+
+    set oldNode(oldNode) {
+      this.oldNode = oldNode;
+    }
+
+    setStatus(obj) {
+      for (let key in obj) {
+        this.status[key] = obj[key];
+      }
+      this.updateDOM();
+    }
+
+    updateDOM() {
+      let newNode = this.render();
+    }
+  }
+
   window.AReact = {
-    createElement
+    createElement,
+    Component
   };
 
   window.AReactDOM = {

@@ -1,28 +1,35 @@
 import "./areact";
 
-const Index = () => {
-  return AReact.createElement(
-    "div",
-    { style: { color: "green" } },
-    AReact.createElement("p", null, "Hello"),
-    AReact.createElement(List, { time1: "asdd" }, null)
-  );
-};
-
 const List = props => {
-  return AReact.createElement(
-    "div",
-    null,
-    AReact.createElement(
-      "ul",
-      { time: props.time1 },
-      AReact.createElement("li", null, "One"),
-      AReact.createElement("li", null, "Two")
-    )
+  return (
+    <div>
+      <ul time={props.time1}>
+        <li>One</li>
+        <li>Two</li>
+      </ul>
+    </div>
   );
 };
 
-AReactDOM.render(
-  AReact.createElement(Index, null, null),
-  document.getElementById("index")
-);
+class App extends AReact.Component {
+  constructor(props) {
+    super(props);
+    this.status = { buttonStatus: true };
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    this.setStatus({ status: !this.status.buttonStatus });
+  }
+
+  render() {
+    return (
+      <div style={{ color: "green" }}>
+        <button onClick={this.handleClick}>Hide</button>
+        <List time1="1234" />
+      </div>
+    );
+  }
+}
+
+AReactDOM.render(<App />, document.getElementById("index"));

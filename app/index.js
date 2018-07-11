@@ -3,7 +3,10 @@ import "./areact";
 const List = props => {
   return (
     <div>
-      <ul time={props.time1}>
+      <ul
+        time={props.time1}
+        style={{ display: props.hidden ? "none" : "block" }}
+      >
         <li>One</li>
         <li>Two</li>
       </ul>
@@ -14,19 +17,21 @@ const List = props => {
 class App extends AReact.Component {
   constructor(props) {
     super(props);
-    this.status = { buttonStatus: true };
+    this.status = { buttonStatus: false };
     this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick() {
-    this.setStatus({ status: !this.status.buttonStatus });
+    this.setStatus({ buttonStatus: !this.status.buttonStatus });
   }
 
   render() {
     return (
       <div style={{ color: "green" }}>
-        <button onClick={this.handleClick}>Hide</button>
-        <List time1="1234" />
+        <button onClick={this.handleClick}>
+          {this.status.buttonStatus ? "Show" : "Hide"}
+        </button>
+        <List time1="1234" hidden={this.status.buttonStatus} />
       </div>
     );
   }

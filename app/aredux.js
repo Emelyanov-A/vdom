@@ -9,7 +9,7 @@
         return state;
       },
       getState: () => {
-        return reducer(state);
+        return state;
       },
       subscribe: fun => {
         render = fun;

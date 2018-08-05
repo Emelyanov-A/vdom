@@ -1,4 +1,5 @@
 import "./areact";
+import "./aredux";
 
 const List = props => {
   return (
@@ -14,24 +15,40 @@ const List = props => {
   );
 };
 
+const buttonReducer = (state = { buttonVisibility: true }, action = {}) => {
+  switch (action.type) {
+    case "SHOW":
+      return { buttonVisibility: true };
+    case "HIDE":
+      return { buttonVisibility: false };
+    default:
+      return state;
+  }
+};
+const store = ARedux.createStore(buttonReducer);
+
 class App extends AReact.Component {
   constructor(props) {
     super(props);
-    this.status = { buttonStatus: false };
+    store.subscribe(() => {
+      this.setStatus(store.getState());
+    });
     this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick() {
-    this.setStatus({ buttonStatus: !this.status.buttonStatus });
+    store.dispatch({
+      type: !store.getState().buttonVisibility ? "SHOW" : "HIDE"
+    });
   }
 
   render() {
     return (
       <div style={{ color: "green" }}>
         <button onClick={this.handleClick}>
-          {this.status.buttonStatus ? "Show" : "Hide"}
+          {store.getState().buttonVisibility ? "Show" : "Hide"}
         </button>
-        <List time1="1234" hidden={this.status.buttonStatus} />
+        <List time1="1234" hidden={store.getState().buttonVisibility} />
       </div>
     );
   }
